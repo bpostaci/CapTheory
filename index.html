@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAP Teoremi — İnteraktif Eğitim Simülatörü</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">CAP</div>
+    <div><h1 data-en="CAP Theorem Lab">CAP Teoremi Laboratuvarı</h1><p data-en="Consistency · Availability · Partition tolerance in distributed systems">Dağıtık sistemlerde Tutarlılık · Erişilebilirlik · Bölünme Toleransı</p></div>
+  </div>
+  <div class="hdr-r">
+    <nav class="tabs">
+      <button class="active" data-tab="theory" data-en="📘 Theory">📘 Teori</button>
+      <button data-tab="sim" data-en="🧪 Simulation">🧪 Simülasyon</button>
+      <button data-tab="quiz" data-en="🎯 Mini Quiz">🎯 Mini Quiz</button>
+    </nav>
+    <div class="lang" title="Dil / Language"><button data-lang="tr">TR</button><button data-lang="en">EN</button></div>
+  </div>
+</header>
+
+<!-- ======================= TEORİ ======================= -->
+<section id="tab-theory" class="tab active">
+ <div class="theory">
+  <div class="hero" data-l="tr">
+    <h2>“Üçünden sadece ikisi” — ama asıl mesele bu değil 🤔</h2>
+    <p><b>CAP teoremi</b> (Eric Brewer, 2000 · ispat: Gilbert &amp; Lynch, 2002) şunu söyler: Veriyi birden fazla makinede (düğümde) kopyalayan bir sistemde
+      <b>ağ bölünmesi (P)</b> yaşandığı anda, sistem ya <b class="cC">tutarlılıktan (C)</b> ya da <b class="cA">erişilebilirlikten (A)</b> vazgeçmek zorundadır.
+      Ağ sağlamken ikisini birden sunabilirsiniz; ama kablo koptuğunda bir karar vermeniz gerekir.</p>
+    <p class="muted">Bu sayfadaki her şey sahte (mock) ama gerçekten çalışan küçük bir dağıtık veritabanıdır: 3 düğüm, 2 istemci, mesajlar, zaman aşımları ve çakışmalar. Teoriyi okuyun, sonra simülasyonda kendiniz bozun!</p>
+    <div class="cta">
+      <button class="btn primary" data-open-sc="normal">▶ Rehberli tura başla</button>
+      <button class="btn" data-open-sc="cp">CP senaryosu</button>
+      <button class="btn" data-open-sc="ap">AP senaryosu</button>
+      <button class="btn" data-open-sc="ca">CA senaryosu</button>
+      <button class="btn" data-open-sc="lab">🧪 Serbest laboratuvar</button>
+    </div>
+  </div>
+  <div class="hero" data-l="en">
+    <h2>“Pick two out of three” — but that is not really the point 🤔</h2>
+    <p>The <b>CAP theorem</b> (Eric Brewer, 2000 · proof: Gilbert &amp; Lynch, 2002) says: in a system that copies data across several machines (nodes),
+      the moment a <b>network partition (P)</b> happens, the system must give up either <b class="cC">consistency (C)</b> or <b class="cA">availability (A)</b>.
+      While the network is healthy you can offer both; but once a cable breaks, you have to make a decision.</p>
+    <p class="muted">Everything on this page is a mock — but a genuinely working little distributed database: 3 nodes, 2 clients, messages, timeouts and conflicts. Read the theory, then break it yourself in the simulator!</p>
+    <div class="cta">
+      <button class="btn primary" data-open-sc="normal">▶ Start the guided tour</button>
+      <button class="btn" data-open-sc="cp">CP scenario</button>
+      <button class="btn" data-open-sc="ap">AP scenario</button>
+      <button class="btn" data-open-sc="ca">CA scenario</button>
+      <button class="btn" data-open-sc="lab">🧪 Free lab</button>
+    </div>
+  </div>
+
+  <div class="theory-grid">
+    <div class="panel">
+      <svg id="tri" viewBox="0 0 460 400">
+        <g class="tri-e" data-k="CA"><line class="edge" x1="230" y1="70" x2="70" y2="330"/><line class="hit" x1="230" y1="70" x2="70" y2="330"/><text x="112" y="190">CA</text></g>
+        <g class="tri-e" data-k="CP"><line class="edge" x1="230" y1="70" x2="390" y2="330"/><line class="hit" x1="230" y1="70" x2="390" y2="330"/><text x="322" y="190">CP</text></g>
+        <g class="tri-e" data-k="AP"><line class="edge" x1="70" y1="330" x2="390" y2="330"/><line class="hit" x1="70" y1="330" x2="390" y2="330"/><text x="212" y="358">AP</text></g>
+        <text class="tri-center" x="230" y="245" text-anchor="middle" data-en="One edge = one choice">Bir kenar = bir seçim</text>
+        <g class="tri-v" data-k="C"><circle cx="230" cy="70" r="44" fill="#4f8cff"/><text class="L" x="230" y="83" text-anchor="middle">C</text><text class="W" x="230" y="18" text-anchor="middle" data-en="Consistency">Consistency · Tutarlılık</text></g>
+        <g class="tri-v" data-k="A"><circle cx="70" cy="330" r="44" fill="#22c55e"/><text class="L" x="70" y="343" text-anchor="middle">A</text><text class="W" x="70" y="392" text-anchor="middle">Availability</text></g>
+        <g class="tri-v" data-k="P"><circle cx="390" cy="330" r="44" fill="#ff5d6c"/><text class="L" x="390" y="343" text-anchor="middle">P</text><text class="W" x="390" y="392" text-anchor="middle">Partition tolerance</text></g>
+      </svg>
+      <p class="hint" data-en="👆 Click the corners (C, A, P) or the edges (CP, AP, CA)">👆 Köşelere (C, A, P) veya kenarlara (CP, AP, CA) tıklayın</p>
+    </div>
+    <div class="panel info-panel" id="triInfo"></div>
+  </div>
+
+  <div data-l="tr">
+  <h2 class="sec">Üç harf, üç söz</h2>
+  <div class="cards3">
+    <div class="panel lcard" style="--col:var(--c)"><div class="big">C</div><h4>Consistency — Tutarlılık</h4>
+      <p>Her okuma, <b>en son başarılı yazmayı</b> (veya hata) döndürür. Hangi düğüme sorarsanız sorun, sistem tek bir kopya varmış gibi davranır (<i>linearizability</i>).</p>
+      <div class="ex">🏦 New York'tan çektiğiniz para, Londra'daki ATM'de anında görünür.</div></div>
+    <div class="panel lcard" style="--col:var(--a)"><div class="big">A</div><h4>Availability — Erişilebilirlik</h4>
+      <p>Çalışan (çökmemiş) <b>her düğüme</b> gelen her istek, makul sürede <b>hata olmayan</b> bir yanıt alır. Yanıtın en güncel olması şart değildir.</p>
+      <div class="ex">📱 Uygulama hiçbir zaman “şu an hizmet veremiyoruz” demez.</div></div>
+    <div class="panel lcard" style="--col:var(--p)"><div class="big">P</div><h4>Partition tolerance — Bölünme toleransı</h4>
+      <p>Düğümler arasındaki mesajlar kaybolsa/gecikse bile (ağ ikiye bölünse bile) sistem <b>çalışmaya devam eder</b>.</p>
+      <div class="ex">✂️ İstanbul–Londra hattı koptu; iki taraf da ayakta ama birbirini duyamıyor.</div></div>
+  </div>
+
+  <h2 class="sec">Hikâye: İki şube, bir kopuk kablo</h2>
+  <div class="story">
+    <div class="panel"><div class="num">1</div><div class="emo">🏦🔗🏦</div><p>Bankanın İstanbul ve Londra şubeleri aynı hesabın kopyasını tutar. Bakiye: <b>100 ₺</b>. Her işlem diğer şubeye anında iletilir.</p></div>
+    <div class="panel"><div class="num">2</div><div class="emo">🏦⚡🏦</div><p>Bir kepçe fiber kabloyu koparır. İki şube çalışıyor ama <b class="cP">birbirini duyamıyor</b>. İstanbul'da 80 ₺ çekiliyor.</p></div>
+    <div class="panel"><div class="num">3</div><div class="emo">🤷</div><p>Londra'da müşteri bakiyesini soruyor. Londra ya <b class="cC">“şu an cevap veremem”</b> der (C'yi korur, A'yı kaybeder) ya da <b class="cA">“100 ₺”</b> der (A'yı korur, ama bilgi eski — C kaybolur).</p></div>
+    <div class="panel"><div class="num">4</div><div class="emo">⚖️</div><p>Üçüncü bir yol yok. Kablo kopuksa, bilgi diğer tarafa <b>fiziksel olarak</b> ulaşamaz. İşte CAP teoremi budur.</p></div>
+  </div>
+
+  <h2 class="sec">Karşılaştırma</h2>
+  <table class="cmp">
+    <tr><th></th><th><span class="cC">CP</span> — Tutarlı + Bölünmeye dayanıklı</th><th><span class="cA">AP</span> — Erişilebilir + Bölünmeye dayanıklı</th><th><span class="warn">CA</span> — Tutarlı + Erişilebilir</th></tr>
+    <tr><td>Bölünme anında</td><td>Azınlık tarafı isteği <b>reddeder</b> (hata/zaman aşımı)</td><td>Her düğüm <b>cevap verir</b>, veri eski olabilir</td><td>Bölünmeyi tolere edemez → sistem kilitlenir / yazmalar durur</td></tr>
+    <tr><td>Yazma kuralı</td><td>Çoğunluk (quorum) onayı: 3 düğümde 2</td><td>Yerel yazar, sonra arka planda kopyalar</td><td>Tüm düğümlerin onayı (3/3)</td></tr>
+    <tr><td>Okuma</td><td>Çoğunluktan okur → hep güncel</td><td>Yereldeki kopyayı okur → eski olabilir</td><td>Yerel okur (tüm kopyalar zaten aynı)</td></tr>
+    <tr><td>İyileşince</td><td>Geride kalan düğüm senkronize olur</td><td>Çakışmalar çözülür (ör. son yazan kazanır, LWW)</td><td>Normale döner</td></tr>
+    <tr><td>Bedeli</td><td>Kesinti / gecikme</td><td>Eski okuma, kayıp güncelleme riski</td><td>Gerçek ağlarda pratik değil</td></tr>
+    <tr><td>Örnek sistemler</td><td><span class="chip">etcd</span> <span class="chip">ZooKeeper</span> <span class="chip">Consul</span> <span class="chip">HBase</span> <span class="chip">MongoDB*</span></td><td><span class="chip star" title="En bilinen AP örneği">⭐ DNS</span> <span class="chip">🔍 Arama sistemleri</span> <span class="chip">Cassandra</span> <span class="chip">DynamoDB</span> <span class="chip">Riak</span> <span class="chip">CouchDB</span></td><td><span class="chip">Tek düğüm PostgreSQL</span> <span class="chip">Tek sunucu MySQL</span></td></tr>
+    <tr><td>Simülasyon</td><td><button class="btn sm" data-open-sc="cp">CP senaryosu ▶</button></td><td><button class="btn sm" data-open-sc="ap">AP senaryosu ▶</button></td><td><button class="btn sm" data-open-sc="ca">CA senaryosu ▶</button></td></tr>
+  </table>
+  <p class="foot">* Birçok modern veritabanı “ayarlanabilir tutarlılık” sunar (ör. Cassandra'da QUORUM, MongoDB'de write concern). Etiketler varsayılan/tipik yapılandırmayı anlatır.</p>
+
+  <div class="two-col">
+    <div class="panel"><h3>❌ Sık yapılan yanlışlar</h3><ul>
+      <li><b>“3'ten 2'yi seç.”</b> Aslında P bir seçenek değildir: ağlar kopar. Gerçek seçim, bölünme anında <b>C mi A mı</b>dır.</li>
+      <li><b>“CP sistem hiç erişilebilir değil.”</b> Yanlış. Normalde tamamen çalışır; sadece bölünme anında azınlık tarafı reddeder.</li>
+      <li><b>“AP sistem tutarsızdır.”</b> Bölünme bitince kopyalar <b>yakınsar</b> (eventual consistency).</li>
+      <li><b>“CAP'teki C = ACID'deki C.”</b> Hayır. CAP'teki C, kopyalar arası güncellik (linearizability); ACID'deki C ise kuralların/kısıtların korunmasıdır.</li>
+    </ul></div>
+    <div class="panel"><h3>⏱ PACELC: Bölünme yokken bile seçim var</h3>
+      <p style="line-height:1.6;font-size:14px">Daniel Abadi'nin genişletmesi: <b>P</b>artition varsa <b>A</b> ile <b>C</b> arasında seç; <b>E</b>lse (normal zamanda) <b>L</b>atency (gecikme) ile <b>C</b> arasında seç.</p>
+      <div class="ex">CP sistem her yazmada çoğunluğu bekler → daha yavaş. AP sistem anında cevap verir → bazen eski okuma.</div>
+      <div class="chipset"><span class="chip">PA/EL: Cassandra, DynamoDB</span><span class="chip">PC/EC: etcd, ZooKeeper, HBase</span><span class="chip">PA/EC: MongoDB (varsayılan)</span></div>
+      <button class="btn sm" data-open-sc="pacelc">PACELC senaryosunu izle ▶</button></div>
+  </div>
+
+  <h2 class="sec">📚 Sözlük</h2>
+  <div class="glossary">
+    <div><b>Düğüm (Node)</b>Verinin bir kopyasını tutan sunucu. Burada N1 İstanbul, N2 New York, N3 Londra.</div>
+    <div><b>Replika</b>Aynı verinin farklı düğümlerdeki kopyası.</div>
+    <div><b>Quorum (Çoğunluk)</b>N düğümden en az ⌊N/2⌋+1 tanesi. 3 düğümde 2. İki çoğunluk her zaman en az bir düğümde kesişir.</div>
+    <div><b>Ağ bölünmesi (Partition)</b>Düğümlerin ayakta olduğu ama birbirleriyle haberleşemediği durum.</div>
+    <div><b>Split-brain</b>Bölünen iki tarafın da kendini “tek yetkili” sanıp farklı kararlar alması.</div>
+    <div><b>Linearizability</b>Sistemin tek bir kopya varmış ve işlemler anında oluyormuş gibi görünmesi. CAP'teki C budur.</div>
+    <div><b>Eventual consistency</b>Yeni yazma olmazsa, tüm kopyalar zamanla aynı değere yakınsar.</div>
+    <div><b>LWW (Last Write Wins)</b>Çakışmada zaman damgası en yeni olan yazma kazanır; diğeri sessizce kaybolur.</div>
+    <div><b>Hinted handoff</b>Ulaşılamayan düğüme gidecek güncellemeyi kuyrukta (📮) tutup, bağlantı gelince teslim etmek.</div>
+    <div><b>Anti-entropy / Senkronizasyon</b>Düğümlerin karşılaştırma yapıp farkları kapatması.</div>
+    <div><b>Read repair</b>Okuma sırasında eski kopya tespit edilirse onu güncellemek.</div>
+    <div><b>İki aşamalı yazma</b>Önce “hazırla” (HAZIRLA/ONAY), çoğunluk evet derse “kesinleştir”.</div>
+  </div>
+  </div>
+
+  <div data-l="en">
+  <h2 class="sec">Three letters, three promises</h2>
+  <div class="cards3">
+    <div class="panel lcard" style="--col:var(--c)"><div class="big">C</div><h4>Consistency</h4>
+      <p>Every read returns the <b>most recent successful write</b> (or an error). Whichever node you ask, the system behaves as if there were a single copy (<i>linearizability</i>).</p>
+      <div class="ex">🏦 Money you withdraw in New York is instantly visible at the ATM in London.</div></div>
+    <div class="panel lcard" style="--col:var(--a)"><div class="big">A</div><h4>Availability</h4>
+      <p>Every request to <b>every working (non-crashed) node</b> gets a <b>non-error</b> response in reasonable time. The response does not have to be the latest.</p>
+      <div class="ex">📱 The app never says “service unavailable right now”.</div></div>
+    <div class="panel lcard" style="--col:var(--p)"><div class="big">P</div><h4>Partition tolerance</h4>
+      <p>The system <b>keeps working</b> even if messages between nodes are lost or delayed (even if the network splits in two).</p>
+      <div class="ex">✂️ The Istanbul–London line is down; both sides are up but cannot hear each other.</div></div>
+  </div>
+
+  <h2 class="sec">A story: two branches, one broken cable</h2>
+  <div class="story">
+    <div class="panel"><div class="num">1</div><div class="emo">🏦🔗🏦</div><p>The bank's Istanbul and London branches keep a copy of the same account. Balance: <b>100 ₺</b>. Every transaction is forwarded to the other branch instantly.</p></div>
+    <div class="panel"><div class="num">2</div><div class="emo">🏦⚡🏦</div><p>An excavator cuts the fibre cable. Both branches are running but <b class="cP">cannot hear each other</b>. 80 ₺ is withdrawn in Istanbul.</p></div>
+    <div class="panel"><div class="num">3</div><div class="emo">🤷</div><p>In London a customer asks for the balance. London either says <b class="cC">“I cannot answer right now”</b> (keeps C, loses A) or says <b class="cA">“100 ₺”</b> (keeps A, but the data is stale — C is lost).</p></div>
+    <div class="panel"><div class="num">4</div><div class="emo">⚖️</div><p>There is no third way. If the cable is cut, the information <b>physically</b> cannot reach the other side. That is the CAP theorem.</p></div>
+  </div>
+
+  <h2 class="sec">Comparison</h2>
+  <table class="cmp">
+    <tr><th></th><th><span class="cC">CP</span> — Consistent + Partition tolerant</th><th><span class="cA">AP</span> — Available + Partition tolerant</th><th><span class="warn">CA</span> — Consistent + Available</th></tr>
+    <tr><td>During a partition</td><td>The minority side <b>rejects</b> requests (error/timeout)</td><td>Every node <b>answers</b>; data may be stale</td><td>Cannot tolerate partitions → the system locks up / writes stop</td></tr>
+    <tr><td>Write rule</td><td>Majority (quorum) ack: 2 of 3 nodes</td><td>Writes locally, then copies in the background</td><td>All nodes must ack (3/3)</td></tr>
+    <tr><td>Read</td><td>Reads from a majority → always fresh</td><td>Reads the local copy → may be stale</td><td>Reads locally (all copies are identical anyway)</td></tr>
+    <tr><td>After healing</td><td>The node that fell behind synchronizes</td><td>Conflicts are resolved (e.g. last write wins, LWW)</td><td>Back to normal</td></tr>
+    <tr><td>The price</td><td>Downtime / latency</td><td>Stale reads, risk of lost updates</td><td>Not practical on real networks</td></tr>
+    <tr><td>Example systems</td><td><span class="chip">etcd</span> <span class="chip">ZooKeeper</span> <span class="chip">Consul</span> <span class="chip">HBase</span> <span class="chip">MongoDB*</span></td><td><span class="chip star" title="Best-known AP example">⭐ DNS</span> <span class="chip">🔍 Search systems</span> <span class="chip">Cassandra</span> <span class="chip">DynamoDB</span> <span class="chip">Riak</span> <span class="chip">CouchDB</span></td><td><span class="chip">Single-node PostgreSQL</span> <span class="chip">Single-server MySQL</span></td></tr>
+    <tr><td>Simulation</td><td><button class="btn sm" data-open-sc="cp">CP scenario ▶</button></td><td><button class="btn sm" data-open-sc="ap">AP scenario ▶</button></td><td><button class="btn sm" data-open-sc="ca">CA scenario ▶</button></td></tr>
+  </table>
+  <p class="foot">* Many modern databases offer “tunable consistency” (e.g. QUORUM in Cassandra, write concern in MongoDB). The labels describe the default/typical configuration.</p>
+
+  <div class="two-col">
+    <div class="panel"><h3>❌ Common misconceptions</h3><ul>
+      <li><b>“Pick 2 of 3.”</b> P is not really optional: networks fail. The real choice, during a partition, is <b>C or A</b>.</li>
+      <li><b>“A CP system is never available.”</b> Wrong. Normally it works fully; only during a partition does the minority side reject requests.</li>
+      <li><b>“An AP system is inconsistent.”</b> Once the partition ends, the copies <b>converge</b> (eventual consistency).</li>
+      <li><b>“The C in CAP = the C in ACID.”</b> No. CAP's C is freshness across copies (linearizability); ACID's C is preserving rules/constraints.</li>
+    </ul></div>
+    <div class="panel"><h3>⏱ PACELC: there is a choice even without partitions</h3>
+      <p style="line-height:1.6;font-size:14px">Daniel Abadi's extension: if there is a <b>P</b>artition, choose between <b>A</b> and <b>C</b>; <b>E</b>lse (normal times) choose between <b>L</b>atency and <b>C</b>onsistency.</p>
+      <div class="ex">A CP system waits for a majority on every write → slower. An AP system answers at once → sometimes stale reads.</div>
+      <div class="chipset"><span class="chip">PA/EL: Cassandra, DynamoDB</span><span class="chip">PC/EC: etcd, ZooKeeper, HBase</span><span class="chip">PA/EC: MongoDB (default)</span></div>
+      <button class="btn sm" data-open-sc="pacelc">Watch the PACELC scenario ▶</button></div>
+  </div>
+
+  <h2 class="sec">📚 Glossary</h2>
+  <div class="glossary">
+    <div><b>Node</b>A server holding a copy of the data. Here N1 Istanbul, N2 New York, N3 London.</div>
+    <div><b>Replica</b>A copy of the same data on a different node.</div>
+    <div><b>Quorum (majority)</b>At least ⌊N/2⌋+1 of N nodes. 2 of 3. Any two majorities always overlap in at least one node.</div>
+    <div><b>Network partition</b>The nodes are up but cannot communicate with each other.</div>
+    <div><b>Split-brain</b>Both sides of a partition believe they are “the authority” and make different decisions.</div>
+    <div><b>Linearizability</b>The system looks as if there were a single copy and operations happened instantly. This is the C in CAP.</div>
+    <div><b>Eventual consistency</b>If no new writes arrive, all copies eventually converge to the same value.</div>
+    <div><b>LWW (Last Write Wins)</b>In a conflict the write with the newest timestamp wins; the other silently disappears.</div>
+    <div><b>Hinted handoff</b>Keeping an update for an unreachable node in a queue (📮) and delivering it when the link comes back.</div>
+    <div><b>Anti-entropy / Sync</b>Nodes compare their data and close the gaps.</div>
+    <div><b>Read repair</b>Updating a stale copy when it is detected during a read.</div>
+    <div><b>Two-phase write</b>First “prepare” (PREPARE/ACK); if a majority says yes, “commit”.</div>
+  </div>
+  </div>
+  <div style="height:30px"></div>
+ </div>
+</section>
+
+<!-- ======================= SİMÜLASYON ======================= -->
+<section id="tab-sim" class="tab">
+ <div class="sim-grid">
+  <aside class="left">
+    <div class="panel"><h3 data-en="🎬 Scenarios">🎬 Senaryolar</h3><div id="scList"></div></div>
+    <div class="panel guide" id="guide">
+      <div class="gh"><span class="mb" id="gMode">CP</span><h3 id="gTitle">—</h3></div>
+      <div class="dots" id="gDots"></div>
+      <h4 id="gStepTitle"></h4>
+      <div class="gtext" id="gText"></div>
+      <div class="gtip" id="gTip" style="display:none"></div>
+      <div class="gnav">
+        <button class="btn" id="gPrev" data-en="◀ Previous">◀ Önceki</button>
+        <button class="btn primary" id="gNext">İleri ▶</button>
+        <button class="btn" id="gAuto" title="Otomatik oynat" data-en-title="Autoplay">⏵ Oto</button>
+        <button class="btn" id="gRestart" title="Senaryoyu baştan başlat" data-en-title="Restart scenario">⟲</button>
+      </div>
+      <div class="gstatus" id="gStatus"></div>
+    </div>
+  </aside>
+
+  <div class="center">
+    <div class="panel toolbar">
+      <div class="tb-group"><span class="tb-label" data-en="Mode">Mod</span>
+        <div class="seg" id="modeSeg"><button data-mode="CP">CP</button><button data-mode="AP">AP</button><button data-mode="CA">CA</button></div></div>
+      <div class="tb-group"><span class="tb-label" data-en="Network">Ağ</span>
+        <button class="btn sm" data-iso="N1" data-en="⚡ Isolate N1">⚡ N1 izole</button><button class="btn sm" data-iso="N2" data-en="⚡ Isolate N2">⚡ N2 izole</button><button class="btn sm" data-iso="N3" data-en="⚡ Isolate N3">⚡ N3 izole</button>
+        <button class="btn sm" id="btnHeal" data-en="🔧 Heal network">🔧 Ağı onar</button></div>
+      <div class="spacer"></div>
+      <div class="tb-group"><button class="btn sm" id="btnPause">⏸</button>
+        <span class="tb-label" data-en="Speed">Hız</span><input type="range" id="speed" min="0.25" max="3" step="0.25" value="1"><span id="speedVal" class="muted" style="font-size:12px;width:34px">1×</span>
+        <button class="btn sm" id="btnReset" data-en="⟲ Reset">⟲ Sıfırla</button></div>
+    </div>
+    <div class="panel stage">
+      <svg id="svg" viewBox="0 0 1000 640">
+        <defs>
+          <linearGradient id="cylG" x1="0" x2="1"><stop offset="0" stop-color="#3d5bd6"/><stop offset=".5" stop-color="#6d8cff"/><stop offset="1" stop-color="#3d5bd6"/></linearGradient>
+          <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g id="gLinks"></g><g id="gClients"></g><g id="gNodes"></g><g id="gMsgs"></g><g id="gOverlay"></g><g id="gBubbles"></g>
+      </svg>
+      <div class="banner"><div class="mode" id="modeBanner"></div>
+        <button type="button" class="warnbtn" id="apWarn" hidden aria-haspopup="dialog" aria-expanded="false" aria-controls="apWarnTip"><span data-en="⚠️ AP is not suitable for a bank">⚠️ Banka için AP uygun değil</span><i>?</i></button>
+        <div class="clock" id="clock">t = 0.0 sn</div></div>
+      <div class="warntip" id="apWarnTip" role="tooltip"><div class="wt-in" id="apWarnIn">
+        <div data-l="tr">
+          <h4>⚠️ AP neden bir banka hesabı için uygun değil?</h4>
+          <p>Bu senaryo bilerek bir <b>banka bakiyesi</b> kullanıyor, çünkü AP'nin bedeli en net burada görülüyor. Gerçek bir bankanın çekirdek hesap sistemi (bakiye, havale, kart provizyonu) bölünme anında <b class="cC">CP</b> gibi davranır.</p>
+          <ul>
+            <li><b>💸 Onaylanmış işlem kayboluyor:</b> Bu simülasyonda A'ya İstanbul'da “başarılı” denen 80 ₺ yazması, ağ onarılınca LWW (son yazan kazanır) kuralı yüzünden <b>sessizce siliniyor</b>. Bankada onaylanmış bir işlem asla kaybolamaz.</li>
+            <li><b>🔁 Çifte harcama / eksi bakiye:</b> Bölünmede iki şube de aynı 100 ₺'yi görür. İstanbul'da 80 ₺, Londra'da 80 ₺ çekilirse hesaptan 160 ₺ çıkar. “Bakiye ≥ 0” kuralı, düğümler birbirine danışmadan korunamaz.</li>
+            <li><b>👁️ Eski okuma:</b> Londra'daki B, gerçek bakiye 80 ₺ iken 150 ₺ görüyor. Müşteri olmayan parayla ödeme yapmaya kalkar ve bankaya güven sarsılır.</li>
+            <li><b>🕐 Saate güvenmek:</b> LWW kazananı zaman damgasıyla seçer. Düğümlerin saatleri birkaç milisaniye bile kaysa yanlış işlem kazanır.</li>
+            <li><b>⚖️ Denetim ve mevzuat:</b> Bankalar her işlemi eksiksiz ve sıralı tutmak zorundadır (muhasebe defteri / <i>ledger</i>). “Sonunda tutarlı olur” cevabı denetimde kabul görmez.</li>
+          </ul>
+          <div class="wt-box"><b>🏦 Bankalar gerçekte ne yapar?</b>
+            <ul>
+              <li><b>Para hareketi → <span class="cC">CP</span>:</b> Bölünmede işlem reddedilir (“İşleminiz şu an gerçekleştirilemiyor”). Yanlış para vermektense kısa süre hizmet vermemek çok daha ucuzdur.</li>
+              <li><b>AP olabilen kısımlar:</b> İşlem geçmişi/ekstre görüntüleme, bildirimler, kampanyalar, “son güncelleme 10:42” notuyla gösterilen bakiye.</li>
+              <li><b>İnce nokta:</b> Eric Brewer'ın ATM örneği: bağlantı koptuğunda bazı ATM'ler <b>küçük bir limitle</b> para verir ve sonradan mutabakat yapılır. Bu, sınırları bilinçli çizilmiş bir AP riskidir.</li>
+            </ul>
+          </div>
+          <p class="muted">💡 AP'nin doğal kullanım alanları: DNS, arama sonuçları, sosyal akış, beğeni sayısı, alışveriş sepeti. Senaryo yine de banka örneğiyle kalıyor, çünkü AP'nin bedelini en somut biçimde gösteriyor.</p>
+        </div>
+        <div data-l="en">
+          <h4>⚠️ Why is AP not suitable for a bank account?</h4>
+          <p>This scenario deliberately uses a <b>bank balance</b>, because that is where the cost of AP is easiest to see. A real bank's core account system (balances, transfers, card authorisations) behaves like <b class="cC">CP</b> during a partition.</p>
+          <ul>
+            <li><b>💸 A confirmed transaction disappears:</b> In this simulation, A's 80 ₺ write in Istanbul is reported as “successful”, yet after the network heals the LWW (last write wins) rule <b>silently deletes it</b>. In a bank, a confirmed transaction can never be lost.</li>
+            <li><b>🔁 Double spending / negative balance:</b> During a partition both branches see the same 100 ₺. If 80 ₺ is withdrawn in Istanbul and 80 ₺ in London, 160 ₺ leaves the account. The “balance ≥ 0” rule cannot be enforced unless the nodes consult each other.</li>
+            <li><b>👁️ Stale reads:</b> B in London sees 150 ₺ while the real balance is 80 ₺. The customer tries to pay with money that is not there, and trust in the bank suffers.</li>
+            <li><b>🕐 Trusting clocks:</b> LWW picks the winner by timestamp. If the nodes' clocks drift by even a few milliseconds, the wrong transaction wins.</li>
+            <li><b>⚖️ Audit and regulation:</b> Banks must keep every transaction complete and in order (the <i>ledger</i>). “It will be consistent eventually” does not pass an audit.</li>
+          </ul>
+          <div class="wt-box"><b>🏦 What do banks actually do?</b>
+            <ul>
+              <li><b>Moving money → <span class="cC">CP</span>:</b> During a partition the transaction is rejected (“Your transaction cannot be processed right now”). A short outage is far cheaper than paying out the wrong money.</li>
+              <li><b>Parts that can be AP:</b> Viewing transaction history/statements, notifications, offers, a balance shown with a “last updated 10:42” note.</li>
+              <li><b>A subtle point:</b> Eric Brewer's ATM example: when the link is down, some ATMs still dispense cash <b>up to a small limit</b> and reconcile later. That is an AP risk with deliberately drawn limits.</li>
+            </ul>
+          </div>
+          <p class="muted">💡 Natural fits for AP: DNS, search results, social feeds, like counters, shopping carts. The scenario still uses the bank example because it shows the cost of AP most concretely.</p>
+        </div>
+      </div></div>
+      <div class="legend">
+        <span><i style="background:#4f8cff"></i><span data-en="WRITE">YAZ</span></span><span><i style="background:#a970ff"></i><span data-en="READ">OKU</span></span><span><i style="background:#22c55e"></i><span data-en="REPLY/ACK">CEVAP/ONAY</span></span>
+        <span><i style="background:#ff9f43"></i><span data-en="PREPARE">HAZIRLA</span></span><span><i style="background:#14b8a6"></i><span data-en="COMMIT">KESİNLEŞTİR</span></span><span><i style="background:#c084fc"></i><span data-en="QUERY">SORGU</span></span>
+        <span><i style="background:#facc15"></i><span data-en="REPLICA">REPLİKA</span></span><span><i style="background:#38bdf8"></i><span data-en="SYNC">SENKRON</span></span><span><i style="background:#ff5d6c"></i><span data-en="ERROR/ABORT">HATA/İPTAL</span></span>
+        <span class="hintline" data-en="💡 Click a node: crash/restart · Click a link: cut/repair">💡 Düğüme tıkla: çökert/kaldır · Bağlantıya tıkla: kes/onar</span>
+      </div>
+    </div>
+    <div class="panel" style="padding:8px 10px"><canvas id="chart"></canvas></div>
+  </div>
+
+  <aside class="right">
+    <div class="panel"><h3 data-en="📊 CAP Gauges">📊 CAP Göstergeleri</h3>
+      <div class="metric"><div class="mh"><div class="ml" style="background:var(--c)">C</div><div><b data-en="Consistency">Tutarlılık</b><small data-en="Replicas &amp; read freshness">Replikalar &amp; okuma güncelliği</small></div><span class="mstate" id="mCstate"></span></div>
+        <div class="chips" id="mCchips"></div><div class="bar"><i id="mCbar" style="background:var(--c)"></i></div><div class="mtxt" id="mCtxt"></div></div>
+      <div class="metric"><div class="mh"><div class="ml" style="background:var(--a)">A</div><div><b data-en="Availability">Erişilebilirlik</b><small data-en="Successful response rate">Başarılı yanıt oranı</small></div><span class="mstate" id="mAstate"></span></div>
+        <div class="chips" id="mAchips"></div><div class="bar"><i id="mAbar" style="background:var(--a)"></i></div><div class="mtxt" id="mAtxt"></div></div>
+      <div class="metric"><div class="mh"><div class="ml" style="background:var(--p)">P</div><div><b data-en="Network status">Ağ durumu</b><small data-en="Links &amp; nodes">Bağlantılar &amp; düğümler</small></div><span class="mstate" id="mPstate"></span></div>
+        <div class="chips" id="mPchips"></div></div>
+      <div class="extra">
+        <div><span class="muted" data-en="Avg. write time">Ort. yazma süresi</span><b id="xW">—</b></div><div><span class="muted" data-en="Avg. read time">Ort. okuma süresi</span><b id="xR">—</b></div>
+        <div><span class="muted" data-en="Conflicts">Çakışma</span><b id="xC">0</b></div><div><span class="muted" data-en="Lost updates">Kayıp güncelleme</span><b id="xL">0</b></div>
+      </div>
+    </div>
+    <div class="panel"><h3 data-en="👥 Clients">👥 İstemciler</h3><div id="clientPanel"></div></div>
+    <div class="panel"><h3 data-en="📜 Event log">📜 Olay günlüğü</h3><div id="log"></div></div>
+  </aside>
+ </div>
+</section>
+
+<!-- ======================= QUIZ ======================= -->
+<section id="tab-quiz" class="tab">
+  <div class="quiz">
+    <div class="panel score"><b id="qScore">Puan: 0 / 8</b><div class="bar"><i id="qBar" style="background:linear-gradient(90deg,var(--c),var(--a));width:0"></i></div><button class="btn sm" id="qReset" data-en="⟲ Restart">⟲ Yeniden</button></div>
+    <div id="quizBox"></div>
+  </div>
+</section>
+
+<script src="i18n.js"></script>
+<script src="content.js"></script>
+<script src="content.en.js"></script>
+<script src="sim.js"></script>
+<script src="render.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>
